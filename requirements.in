@@ -1,0 +1,9 @@
+click
+Flask
+Flask-SQLAlchemy
+Flask-Marshmallow
+marshmallow-sqlalchemy
+Flask-Script
+Flask-Migrate
+celery
+redis
