@@ -4,8 +4,8 @@ import os
 class Development:
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = "sqlite:///db.sqlite3"
-    CELERY_BROKER_URL = "redis://localhost:6379/0"
-    CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+    CELERY_BROKER_URL = "redis://redis:6379/0"
+    CELERY_RESULT_BACKEND = "redis://redis:6379/0"
 
 
 class Production:

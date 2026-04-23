@@ -1,5 +1,5 @@
 from flask import Flask
-from ingestion.extensions import db, celery, migrate
+from ingestion.extensions import db, ma, migrate
 from ingestion.config import get_config
 
 
@@ -13,7 +13,7 @@ def create_app():
     # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
-    celery.conf.update(app.config)
+    ma.init_app(app)
 
     # Create tables within application context
     with app.app_context():

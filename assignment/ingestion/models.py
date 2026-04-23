@@ -31,7 +31,7 @@ class Transaction(db.Model):
     merchant_name = db.Column(db.String(255), nullable=True)
     description = db.Column(db.Text, nullable=False)
     category = db.Column(db.String(100), nullable=True)
-    batch_id = db.Column(db.String(36), nullable=False)  # UUID as string
+    batch_id = db.Column(db.String(36), nullable=True)
     ingestion_status = db.Column(db.Enum(IngestionStatus, nullable=False, default=IngestionStatus.PENDING))
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)

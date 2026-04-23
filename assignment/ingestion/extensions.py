@@ -1,7 +1,9 @@
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from celery import Celery
+from flask_marshmallow import Marshmallow
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 
+celery = Celery()
 db = SQLAlchemy()
 migrate = Migrate()
-celery = Celery()
+ma = Marshmallow()

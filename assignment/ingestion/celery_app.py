@@ -1,4 +1,8 @@
 from ingestion.app import create_app
+from ingestion.extensions import celery
 
 flask_app = create_app()
-celery = flask_app.extensions["celery"]
+celery.conf.update(
+    broker_url=flask_app.config["CELERY_BROKER_URL"],
+    result_backend=flask_app.config.get("CELERY_RESULT_BACKEND"),
+)

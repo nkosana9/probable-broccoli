@@ -1,0 +1,51 @@
+services:
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Flask Web Application
+  flask:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: >
+      sh -c "cd assignment && flask db upgrade && python wsgi.py --host=0.0.0.0 --port=8080"
+    container_name: flask
+    depends_on:
+      - redis
+    environment:
+      - FLASK_ENV=development
+      - PYTHONPATH=/app/assignment
+    ports:
+      - "8080:8080"
+
+  # Celery Worker
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: celery
+    command: celery -A ingestion.celery_app worker --loglevel=info
+    depends_on:
+      - flask
+      - redis
+    environment:
+      - FLASK_ENV=development
+      - PYTHONPATH=/app/assignment
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+
+volumes:
+  redis_data:

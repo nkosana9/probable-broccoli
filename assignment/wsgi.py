@@ -7,7 +7,7 @@ from ingestion.app import create_app
 
 @click.command()
 @click.option("--host", default="0.0.0.0")
-@click.option("--port", default=5000, type=int)
+@click.option("--port", default=8080, type=int)
 def run(host: str, port: int) -> None:
     """Run the Flask application."""
     app = create_app()

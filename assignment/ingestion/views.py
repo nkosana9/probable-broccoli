@@ -6,6 +6,7 @@ from flask import jsonify, request
 
 from ingestion.extensions import db
 from ingestion.models import Account, Transaction
+from ingestion.schemas import AccountSchema, TransactionSchema
 from ingestion.tasks import process_transactions
 
 
@@ -19,9 +20,7 @@ def bulk_account_ingestion():
             {
                 "account_id": "acc_123",
                 "name": "John Doe",
-                "type": "checking",
-                "subtype": "personal",
-                "mask": "1234"
+                "type": "checking"
             },
             ...
         ],
@@ -39,29 +38,32 @@ def bulk_account_ingestion():
         ]
     }
     """
+    # Basic validation for JSON payload
     data = request.get_json()
-    accounts_data = data.get("accounts", [])
-    transactions_data = data.get("transactions", [])
-    request_account_ids = [a["account_id"] for a in accounts_data]
+    account_schema = AccountSchema(many=True)
+    transaction_schema = TransactionSchema(many=True)
+
+    accounts_data = account_schema.load(data.get("accounts", []))
+    transactions_data = transaction_schema.load(data.get("transactions", []))
+    request_account_ids = [a.account_id for a in accounts_data]
 
     # Upsert accounts
     existing_accounts = Account.query.filter(Account.account_id.in_(request_account_ids)).all()
     existing_account_ids = set(a.account_id for a in existing_accounts)
-    accounts_to_create = [Account(**a) for a in accounts_data if a["account_id"] not in existing_account_ids]
+    accounts_to_create = [account for account in accounts_data if account.account_id not in existing_account_ids]
     if accounts_to_create:
         db.session.bulk_save_objects(accounts_to_create)
 
     # Bulk create transactions
     batch_id = str(uuid4())
-    transactions_to_create = [Transaction(**t, batch_id=batch_id) for t in transactions_data]
-    db.session.bulk_save_objects(transactions_to_create)
+    for transaction in transactions_data:
+        transaction.batch_id = batch_id
+
+    db.session.bulk_save_objects(transactions_data)
     db.session.commit()
 
-    # Trigger async categorization task with Celery
-    # from .tasks import categorise_transactions
-
     process_transactions.delay(batch_id)
-    return jsonify({"total_transactions": len(transactions_to_create), "batch_id": batch_id}), 201
+    return jsonify({"total_transactions": len(transactions_data), "batch_id": batch_id}), 201
 
 
 def account_summary(account_id: int):
