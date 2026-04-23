@@ -1,4 +1,4 @@
-# Docker Setup for Lucro Django Project
+# Docker Setup for the Project
 
 This docker-compose setup provides a complete development environment with:
 - **Redis**: Cache and message broker for Celery

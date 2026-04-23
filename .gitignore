@@ -45,7 +45,7 @@ htmlcov/
 coverage.xml
 nosetests.xml
 
-# Django stuff:
+# Web stuff:
 *.log
 local_settings.py
 db.sqlite3
