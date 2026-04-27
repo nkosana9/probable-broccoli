@@ -4,6 +4,7 @@
 # Sends multiple test batches with various transaction types for categorization
 
 BASE_URL="http://localhost:8080"
+TOKEN=$1
 
 echo "🚀 Starting test data ingestion..."
 echo ""
@@ -11,6 +12,7 @@ echo ""
 # Test 1: Basic ingestion with various merchants
 echo "📦 Test 1: Ingesting batch with various transaction categories..."
 curl -X POST "$BASE_URL/accounts/bulk-ingestion" \
+  -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "accounts": [
@@ -107,7 +109,8 @@ echo ""
 # Test 2: Additional transactions for account_001
 echo "📦 Test 2: Ingesting additional transactions for existing account..."
 curl -X POST "$BASE_URL/accounts/bulk-ingestion" \
-  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \  
   -d '{
     "accounts": [],
     "transactions": [
@@ -165,6 +168,7 @@ echo ""
 # Test 3: Query account summary
 echo "📊 Test 3: Fetching account summary for acc_001..."
 curl -s -X GET "$BASE_URL/accounts/acc_001/summary?start_date=2026-01-01&end_date=2026-01-30" \
+  -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" | jq '.'
 echo ""
 

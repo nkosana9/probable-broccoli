@@ -17,6 +17,9 @@ This docker-compose setup provides a complete development environment with:
 ## Quick Start
 
 ### 1. Build and Start Services
+Edit the `base.env` file to set your `AUTH_TOKEN` and any other environment variables as needed.
+
+Then, run the following command in the terminal:
 
 ```bash
 docker-compose up -d
@@ -44,7 +47,7 @@ A script with sample API requests is provided in `sample_requests.sh`. You can r
 
 ```bash
 chmod +x sample_requests.sh
-./sample_requests.sh
+./sample_requests.sh <YOUR_AUTH_TOKEN_HERE>
 ```
 
 

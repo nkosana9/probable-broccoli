@@ -6,7 +6,7 @@ from uuid import uuid4
 from flask import jsonify, request
 
 from ingestion.enums import IngestionStatus
-from ingestion.extensions import db
+from ingestion.extensions import db, token_required
 from ingestion.models import Account, Transaction
 from ingestion.schemas import AccountSchema, TransactionSchema
 from ingestion.tasks import process_transactions
@@ -15,6 +15,7 @@ _logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 
+@token_required
 def bulk_account_ingestion():
     """
     Endpoint to ingest bulk accounts and transactions data for further processing
@@ -72,6 +73,7 @@ def bulk_account_ingestion():
     return jsonify({"total_transactions": len(transactions_data), "batch_id": batch_id}), 201
 
 
+@token_required
 def account_summary(account_id: int):
     """
     Endpoint to get summary of transactions for a given account and date range

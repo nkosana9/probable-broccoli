@@ -2,6 +2,7 @@ import os
 
 
 class BaseConfig:
+    AUTH_TOKEN: str = os.getenv("AUTH_TOKEN", "")
     DEBUG: bool = os.getenv("DEBUG", "").lower() in ("true", "1")
     SQLALCHEMY_DATABASE_URI: str = os.environ["DATABASE_URL"]
     CELERY_BROKER_URL: str = os.environ["CELERY_BROKER_URL"]
