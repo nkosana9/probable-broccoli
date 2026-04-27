@@ -1,13 +1,18 @@
+import logging
 from collections import Counter
 from datetime import datetime
 from uuid import uuid4
 
 from flask import jsonify, request
 
+from ingestion.enums import IngestionStatus
 from ingestion.extensions import db
 from ingestion.models import Account, Transaction
 from ingestion.schemas import AccountSchema, TransactionSchema
 from ingestion.tasks import process_transactions
+
+_logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
 
 def bulk_account_ingestion():
@@ -58,6 +63,7 @@ def bulk_account_ingestion():
     batch_id = str(uuid4())
     for transaction in transactions_data:
         transaction.batch_id = batch_id
+        transaction.ingestion_status = IngestionStatus.PENDING
 
     db.session.bulk_save_objects(transactions_data)
     db.session.commit()
@@ -92,9 +98,18 @@ def account_summary(account_id: int):
         Transaction.date >= start_date_dt,
         Transaction.date <= end_date_dt,
     )
+
     total_transactions = transactions.count()
     total_spend = sum(abs(t.amount) for t in transactions if t.amount < 0)
     total_income = sum(t.amount for t in transactions if t.amount > 0)
+
+    _logger.debug(
+        "Account %s summary - Total: %d, Spend: %.2f, Income: %.2f",
+        account_id,
+        total_transactions,
+        total_spend,
+        total_income,
+    )
 
     # Top 5 categories
     cat_counter = Counter()

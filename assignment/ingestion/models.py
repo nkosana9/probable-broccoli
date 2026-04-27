@@ -1,14 +1,7 @@
 from datetime import datetime
-from enum import StrEnum
 
+from ingestion.enums import IngestionStatus
 from ingestion.extensions import db
-
-
-class IngestionStatus(StrEnum):
-    PENDING = "pending"
-    PROCESSING = "processing"
-    COMPLETED = "completed"
-    FAILED = "failed"
 
 
 class Account(db.Model):

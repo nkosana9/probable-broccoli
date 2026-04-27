@@ -1,3 +1,7 @@
+# Project Overview
+This project is a Flask-based web application designed to handle the bulk ingestion of financial transactions - whic hare then categorized and reported on.  
+The application provides RESTful API endpoints to ingest transactions and generate reports based on the ingested data. Once ingested, transactions are processed asynchronously using Celery, which allows for efficient handling of large volumes of data without blocking the main application.
+
 # Docker Setup for the Project
 
 This docker-compose setup provides a complete development environment with:
@@ -32,9 +36,21 @@ Check that all services are running:
 docker-compose ps
 ```
 
-### 3. Making Requests
+### 3. Running the sample API requests
 
-With everything setup, you can now make API requests to your Flask app. For example, to ingest bulk transactions:
+With everything setup, you can now make API requests to your Flask app. 
+
+A script with sample API requests is provided in `sample_requests.sh`. You can run it to test the endpoints:
+
+```bash
+chmod +x sample_requests.sh
+./sample_requests.sh
+```
+
+
+The endpoints may also be called manually.
+
+For example, to ingest bulk transactions:
 
 ```bash
 curl -X POST "http://localhost:8080/api/ingestion/accounts/bulk" \
@@ -52,8 +68,8 @@ curl -X POST "http://localhost:8080/api/ingestion/accounts/bulk" \
                 "transaction_id": "txn_456",
                 "account_id": "acc_123",
                 "amount": -50.75,
-                "currency": "USD",
-                "date": "2024-06-01T12:34:56Z",
+                "currency": "ZAR",
+                "date": "2026-01-01T12:34:56Z",
                 "merchant_name": "Amazon",
                 "description": "Amazon purchase"
             }
@@ -64,6 +80,6 @@ curl -X POST "http://localhost:8080/api/ingestion/accounts/bulk" \
 To get an account summary:
 
 ```bash
-curl "http://localhost:8080/api/reports/account/acc_12345/summary/?start_date=2025-10-01&end_date=2026-01-01"
+curl "http://localhost:8080/api/reports/account/acc_12345/summary/?start_date=2026-01-01&end_date=2026-01-31"
 ```
 

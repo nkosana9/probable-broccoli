@@ -24,10 +24,14 @@ services:
     depends_on:
       - redis
     environment:
-      - FLASK_ENV=development
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - DATABASE_URL=sqlite:///db.sqlite3
       - PYTHONPATH=/app/assignment
     ports:
       - "8080:8080"
+    volumes:
+      - db_data:/app/assignment/instance
 
   # Celery Worker
   celery:
@@ -40,12 +44,16 @@ services:
       - flask
       - redis
     environment:
-      - FLASK_ENV=development
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - DATABASE_URL=sqlite:///db.sqlite3
       - PYTHONPATH=/app/assignment
     ports:
       - "8000:8000"
     volumes:
       - .:/app
+      - db_data:/app/assignment/instance
 
 volumes:
-  redis_data:
+  db_data:
+  redis_data:  
